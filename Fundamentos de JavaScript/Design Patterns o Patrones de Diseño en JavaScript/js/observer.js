@@ -8,7 +8,7 @@ let observer = {
      },
      cancelarOfertas: function(callback) {
           for(let i = 0; i < this.subscribers.legth; i++) {
-               if (this.subscribers.[i] === callback) {
+               if (this.subscribers[i] === callback) {
                     delete this.subscribers[i];
                }
           }
