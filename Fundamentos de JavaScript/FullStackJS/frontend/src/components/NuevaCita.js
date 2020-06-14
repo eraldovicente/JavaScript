@@ -1,7 +1,50 @@
-import React, { Fragment } from 'react';
-import { Link } from 'react-router-dom';
+import React, { Fragment, useState } from 'react';
+import { Link, withRouter } from 'react-router-dom';
 
-const NuevaCita = () => {
+import clienteAxios from '../config/axios';
+
+const NuevaCita = (props) => {
+
+     // console.log(props);
+
+     // Generar state como objeto
+     const [cita, guardarCita] = useState({
+          nombre: '',
+          propietario: '',
+          fecha: '',
+          hora: '',
+          telefono: '',
+          sintomas: ''
+     });
+
+     // Lea los datos del formulario
+     const actualizarState = e => {
+          // console.log(e.target.name);
+          // console.log(e.target.value);
+
+          guardarCita({
+               ...cita,
+               [e.target.name] : e.target.value
+          })
+     }
+
+     // Enviar una peticion a la API
+     const crearNuevaCita = e => {
+          e.preventDefault();
+
+          // enviar la peticion por axios 
+          clienteAxios.post('/pacientes', cita)
+               .then(respuesta => {
+                    console.log(respuesta);
+
+                    props.guardarConsultar(true);
+
+                    // Redireccionar
+                    props.history.push('/')
+               })
+     }
+
+
      return ( 
           <Fragment>
                <h1 className="my-5">Crear nueva cita</h1>
@@ -13,7 +56,9 @@ const NuevaCita = () => {
                          </div>
 
                          <div className="col-md-8 mx-auto">
-                         <form className="bg-white p-5 bordered">
+                         <form 
+                              onSubmit={crearNuevaCita}
+                              className="bg-white p-5 bordered">
                                    <div className="form-group">
                                         <label htmlFor="nombre">Nombre Mascota</label>
                                         <input 
@@ -22,6 +67,7 @@ const NuevaCita = () => {
                                              id="nombre" 
                                              name="nombre" 
                                              placeholder="Nombre Mascota" 
+                                             onChange={actualizarState}
                                         />
                                    </div>
 
@@ -33,6 +79,7 @@ const NuevaCita = () => {
                                              id="propietario" 
                                              name="propietario" 
                                              placeholder="Nombre Propietario" 
+                                             onChange={actualizarState}
                                         />
                                    </div>
 
@@ -44,6 +91,7 @@ const NuevaCita = () => {
                                              id="telefono" 
                                              name="telefono" 
                                              placeholder="Teléfono" 
+                                             onChange={actualizarState}
                                         />
                                    </div>
 
@@ -54,6 +102,7 @@ const NuevaCita = () => {
                                              className="form-control form-control-lg" 
                                              id="fecha" 
                                              name="fecha"  
+                                             onChange={actualizarState}
                                         />
                                    </div>
 
@@ -64,6 +113,7 @@ const NuevaCita = () => {
                                              className="form-control form-control-lg" 
                                              id="hora" 
                                              name="hora"  
+                                             onChange={actualizarState}
                                         />
                                    </div>
 
@@ -73,6 +123,7 @@ const NuevaCita = () => {
                                              className="form-control" 
                                              name="sintomas" 
                                              rows="6"
+                                             onChange={actualizarState}
                                         ></textarea>
                                    </div>
 
@@ -88,4 +139,4 @@ const NuevaCita = () => {
       );
 }
  
-export default NuevaCita;
+export default withRouter(NuevaCita);

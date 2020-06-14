@@ -12,20 +12,26 @@ function App() {
 
      // State da la app
      const [citas, guardarCitas] = useState([]);
+     const [consultar, guardarConsultar] = useState(true);
 
      useEffect( () => {
-          const consultarAPI = () => {
-               clienteAxios.get('/pacientes')
-                    .then(respuesta => {
-                         // colocar en el state el resultado
-                         guardarCitas(respuesta.data);
-                    })
-                    .catch(error => {
-                         console.log(error)
-                    });
+          if (consultar) {
+               const consultarAPI = () => {
+                    clienteAxios.get('/pacientes')
+                         .then(respuesta => {
+                              // colocar en el state el resultado
+                              guardarCitas(respuesta.data);
+
+                              // deshabilitar la consulta
+                              guardarConsultar(false);
+                         })
+                         .catch(error => {
+                              console.log(error)
+                         });
+               }
+               consultarAPI();
           }
-          consultarAPI();
-     }, [] );
+     }, [consultar] );
 
      // console.log(process.env.REACT_APP_BACKEND_URL);
      return (
@@ -36,11 +42,23 @@ function App() {
                     />
 
                     <Route
-                         exact path="/nueva" component={NuevaCita}
+                         exact path="/nueva" component={() => <NuevaCita guardarConsultar={guardarConsultar} />}
                     />
 
                     <Route
-                         exact path="/cita/:id" component={Cita}
+                         exact path="/cita/:id" 
+                         render={(props) => {
+                              const cita = citas.filter(cita => cita._id === props.match.params.id)
+
+                              // console.log(cita);
+
+                              return (
+                                   <Cita 
+                                        cita={cita[0]} 
+                                        guardarConsultar={guardarConsultar}
+                                   />
+                              )
+                         }}
                     />
                </Switch>
           </Router>
