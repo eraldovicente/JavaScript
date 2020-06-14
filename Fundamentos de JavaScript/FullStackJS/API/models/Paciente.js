@@ -6,7 +6,7 @@ const pacientesSchema = new Schema({
           type: String,
           trim: true
      },
-     proprietario: {
+     propietario: {
           type: String,
           trim: true
      },
